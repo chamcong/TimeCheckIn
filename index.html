@@ -79,7 +79,8 @@
 <script>
     window.onload = function() {
         getCheckinData();
-
+        const today = new Date().toISOString().slice(0, 10);
+        document.getElementById('date').value = today;
         // Get aliasID from cookie and set it to the input field
         const aliasID = getAliasIDFromCookie();
         if (aliasID) {
