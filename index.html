@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <title>Get Checkin Data</title>
@@ -43,7 +43,7 @@
         <div class="col-md-6">
             <div class="form-group">
                 <label for="date">Date:</label>
-                <input type="date" class="form-control" id="date" value="2024-04-11" oninput="getCheckinData()">
+                <input type="date" class="form-control" id="date" value="2024-04-12" oninput="getCheckinData()">
             </div>
             <div class="form-group">
                 <label for="employee-id">Employee ID:</label>
@@ -78,15 +78,17 @@
 
 <script>
     window.onload = function() {
-        getCheckinData();
         const today = new Date().toISOString().slice(0, 10);
         document.getElementById('date').value = today;
+        getCheckinData();
+
         // Get aliasID from cookie and set it to the input field
         const aliasID = getAliasIDFromCookie();
         if (aliasID) {
             document.getElementById('employee-id').value = aliasID;
         }
     };
+
     function getAliasIDFromCookie() {
         const cookies = document.cookie.split(';');
         for (let i = 0; i < cookies.length; i++) {
@@ -137,15 +139,22 @@
             params: params,
             headers: headers
         })
-            .then(response => {
-                const filteredData = response.data.data.filter(item => item.aliasID === aliasID);
+        .then(response => {
+            const filteredData = response.data.data.filter(item => item.aliasID === aliasID);
 
-                // Sort the filtered data by checkinTime in ascending order
-                filteredData.sort((a, b) => new Date(a.checkinTime) - new Date(b.checkinTime));
+            // Sort the filtered data by checkinTime in ascending order
+            filteredData.sort((a, b) => new Date(a.checkinTime) - new Date(b.checkinTime));
 
-                const resultTable = document.getElementById('result-table');
-                const resultTbody = document.getElementById('result-tbody');
-                resultTbody.innerHTML = '';
+            const resultTable = document.getElementById('result-table');
+            const resultTbody = document.getElementById('result-tbody');
+            resultTbody.innerHTML = '';
+
+            if (filteredData.length === 0) {
+                resultTable.style.display = 'none';
+                document.getElementById('error-message').textContent = 'Chưa có dữ liệu chấm công.';
+            } else {
+                document.getElementById('error-message').textContent = '';
+                resultTable.style.display = 'table';
 
                 filteredData.forEach(item => {
                     const row = document.createElement('tr');
@@ -198,15 +207,13 @@
                     row.appendChild(statusCell);
                     resultTbody.appendChild(row);
                 });
-
-                resultTable.style.display = 'table';
-                document.getElementById('error-message').textContent = '';
-            })
-            .catch(error => {
-                console.error(error);
-                document.getElementById('error-message').textContent = 'Error: ' + error.message;
-                document.getElementById('result-table').style.display = 'none';
-            });
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            document.getElementById('result-table').style.display = 'none';
+            document.getElementById('error-message').textContent = 'Chưa có dữ liệu chấm công.';
+        });
     }
 </script>
 </body>
