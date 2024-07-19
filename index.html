@@ -154,7 +154,8 @@
             headers: headers
         })
         .then(response => {
-            const filteredData = response.data.data.filter(item => item.aliasID === aliasID);
+            //const filteredData = response.data.data.filter(item => item.aliasID === aliasID);
+            const filteredData = response.data.data;
 
             // Sort the filtered data by checkinTime in ascending order
             filteredData.sort((a, b) => new Date(a.checkinTime) - new Date(b.checkinTime));
